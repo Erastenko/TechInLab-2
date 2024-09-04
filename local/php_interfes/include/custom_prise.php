@@ -1,57 +1,62 @@
 <?php
-
 use \Bitrix\Main\Loader,
 \Bitrix\Main\Localization\Loc;
 
-Loader::includeModule('catalog');
-Loader::includeModule('sale');
+\CModule::IncludeModule('catalog');
+\CModule::IncludeModule('sale');
 
 \Bitrix\Main\Loader::includeModule('highloadblock');
 use Bitrix\Highloadblock as HL;
+use Bitrix\Main;
 use Bitrix\Main\Entity;
+use Bitrix\Main\Event;
+use Bitrix\Main\EventManager;
+use Bitrix\Sale\BasketItem;
 
+EventManager::getInstance()->addEventHandler(
+    'sale',
+    'OnSaleBasketBeforeSaved',
+    ['\PriceOverrideHandler', 'ApplyCustomPrice']
+);
 
-
-class CCatalogProductCustomPrice extends CCatalogProductProvider
+class PriceOverrideHandler
 {
-    public static function GetProductData($arParams)
+    public static function ApplyCustomPrice(\Bitrix\Main\Event $event)
     {
-		//	$i++;
-		//   echo 'this'. $i . ' ';
-        $arResult = parent::GetProductData($arParams);
 
-        $hlblockId = HL\HighloadBlockTable::getById(4)->fetch(); // Получаем запись из HL блока №4
-        $entity = HL\HighloadBlockTable::compileEntity($hlblockId);
-        $entity_data_class = $entity->getDataClass();
+        $basket = $event->getParameter("ENTITY");
 
-
-        $rsDataPrice = $entity_data_class::getList(array(
-            "select" => ["UF_PRICE_PRODUCT"],
-            "filter" => [
-                "UF_ID_PRODUCT" => $arParams["PRODUCT_ID"]
-            ]
-        ));
-        while ($arItemPrice = $rsDataPrice->Fetch()) {
-            $curItemPrice = $arItemPrice['UF_PRICE_PRODUCT']; // Индивидуальная цена
-
+        $discountPrice = new CustomPriceLoaderHL;
+        foreach ($discountPrice->LoadCustomPriceData() as $discountItem) {
+            foreach ($basket as $basketItem) {
+                if ($basketItem->getProductId() == $discountItem["UF_ID_PRODUCT"]) {
+                    $basketItem->setField('BASE_PRICE', $discountItem["UF_PRICE_PRODUCT"]);
+                }
+            }
         }
-
-        if (!empty($curItemPrice)) {
-            $arResult = [
-                'BASE_PRICE' => $curItemPrice, 
-            ] + $arResult;
-
-        }
-
-        return $arResult;
     }
 }
 
-
-AddEventHandler('sale', 'OnSaleBasketItemRefreshData', 'BeforeBasketAddHandler');
-
-function BeforeBasketAddHandler($BasketItem)
+class CustomPriceLoaderHL
 {
+    public static function LoadCustomPriceData()
+    {
+        $priceData = HL\HighloadBlockTable::compileEntity('PriceBasket')->getDataClass();
 
-    $BasketItem->setField("PRODUCT_PROVIDER_CLASS", "CCatalogProductCustomPrice");
+        $customPriceDataQuery = $priceData::getList([
+            "select" => ["UF_ID_PRODUCT", "UF_PRICE_PRODUCT"],
+            "order" => ["ID" => "DESC"],
+            "filter" => [
+                "!=UF_PRICE_PRODUCT" => 0,
+            ],
+        ]);
+
+        $arCustomPrice = [];
+
+        while ($PriceOne = $customPriceDataQuery->fetch()) {
+            $arCustomPrice[] = $PriceOne;
+        }
+
+        return $arCustomPrice;
+    }
 }
