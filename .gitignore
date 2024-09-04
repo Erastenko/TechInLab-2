@@ -1,0 +1,145 @@
+### Node.js ###
+node_modules
+bower_components
+.grunt
+.npm
+.env
+
+### NPM ###
+.npm
+npm-debug.log*
+
+### Bower ###
+bower_components
+.bower-cache
+.bower-registry
+.bower-tmp
+
+### Composer ###
+composer.phar
+/vendor/
+vendor
+
+### WebStorm ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+*.iml
+.idea/
+
+# File-based project format:
+*.ipr
+*.iws
+
+### IntelliJ ###
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+### VisualStudioCode ###
+.vscode
+
+### SublimeText ###
+# cache files for sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# workspace files are user-specific
+*.sublime-workspace
+
+# sftp configuration file
+sftp-config.json
+
+# ---
+
+# различные системные папки и файлы хостингов и операционных систем
+/cgi-bin/
+/awstats/
+/webstat/
+.DS_Store
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+
+# исключаем все текстовые и подобные ресурсы (на нашей практике они всегда излишни)
+*.xml
+*.html
+*.txt
+*.css.map
+
+# архивы, включая многотомные
+*.zip
+*.zip*
+*.tar
+*.tar*
+*.enc
+*.enc*
+*.dt
+*.dt*
+*.gz
+*.gz*
+*.tgz
+*.tgz*
+*.sql
+*.rar
+*.doc
+*.docx
+*.pdf
+*.rtf
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.psd
+*.psb
+*.sketch
+core.*
+.hg
+.ftpconfig
+/*~
+*/_*
+/_*
+*.bak
+*.old
+*.tr
+*.debug
+
+# храним robots.txt — он нужен
+!/robots.txt
+
+# исключаем sitemap
+/sitemap*.xml
+
+# исключаем логи xhprof
+/xhprof/logs
+
+# исключаем логи
+/local/php_interface/logs/
+/local/logs/
+logs
+*.log
+
+# исключаем служебные и ненужные папки проекта
+/upload/
+/images/
+/dump/
+/new/
+/new_design_2020/
+/dev
+/pma
+/verstka
+
+# исключаем файл обработки адресов
+/urlrewrite.php
+
+# исключаем ВСЮ папку bitrix
+# используйте папку /local, чтобы полностью исключить папку bitrix
+!/bitrix
+/bitrix/*
+!bitrix/license_key.php
+
+/.htaccess
+/.htsecure
+/.htaccess.restore
+
